@@ -2,7 +2,6 @@
 
 const log = require('debug')('ipfs:components:init')
 const PeerId = require('peer-id')
-const PeerInfo = require('peer-info')
 const mergeOptions = require('merge-options')
 const getDefaultConfig = require('../runtime/config-nodejs.js')
 const createRepo = require('../runtime/repo-nodejs')
@@ -79,7 +78,6 @@ module.exports = ({
       : await initNewRepo(repo, { ...options, print })
 
     log('peer created')
-    const peerInfo = new PeerInfo(peerId)
     const blockService = new BlockService(repo)
     const ipld = new Ipld(getDefaultIpldOptions(blockService, constructorOptions.ipld, log))
 
@@ -134,7 +132,7 @@ module.exports = ({
       // Setup the offline routing for IPNS.
       // This is primarily used for offline ipns modifications, such as the initializeKeyspace feature.
       const offlineDatastore = new OfflineDatastore(repo)
-      const ipns = new IPNS(offlineDatastore, repo.datastore, peerInfo, keychain, { pass: options.pass })
+      const ipns = new IPNS(offlineDatastore, repo.datastore, peerId, keychain, { pass: options.pass })
       await ipns.initializeKeyspace(peerId.privKey, emptyDirCid.toString())
     }
 
@@ -149,7 +147,7 @@ module.exports = ({
       ipld,
       keychain,
       object,
-      peerInfo,
+      peerId,
       pin,
       pinManager,
       preload,
@@ -293,7 +291,7 @@ function createApi ({
   ipld,
   keychain,
   object,
-  peerInfo,
+  peerId,
   pin,
   pinManager,
   preload,
@@ -332,7 +330,7 @@ function createApi ({
     dns: Components.dns(),
     files: Components.files({ ipld, blockService, repo, preload, options: constructorOptions }),
     get: Components.get({ ipld, preload }),
-    id: Components.id({ peerInfo }),
+    id: Components.id({ peerId }),
     init: async () => { throw new AlreadyInitializedError() }, // eslint-disable-line require-await
     isOnline: Components.isOnline({}),
     key: {
@@ -362,7 +360,7 @@ function createApi ({
       initOptions,
       ipld,
       keychain,
-      peerInfo,
+      peerId,
       pinManager,
       preload,
       print,
@@ -378,7 +376,7 @@ function createApi ({
       addrs: notStarted,
       connect: notStarted,
       disconnect: notStarted,
-      localAddrs: Components.swarm.localAddrs({ peerInfo }),
+      localAddrs: Components.swarm.localAddrs({ multiaddrs: [] }),
       peers: notStarted
     },
     version: Components.version({ repo })

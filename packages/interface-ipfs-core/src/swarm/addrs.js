@@ -31,13 +31,13 @@ module.exports = (common, options) => {
     after(() => common.clean())
 
     it('should get a list of node addresses', async () => {
-      const peerInfos = await ipfsA.swarm.addrs()
-      expect(peerInfos).to.not.be.empty()
-      expect(peerInfos).to.be.an('array')
+      const peerDatas = await ipfsA.swarm.addrs()
+      expect(peerDatas).to.not.be.empty()
+      expect(peerDatas).to.be.an('array')
 
-      expect(peerInfos).to.all.satisfy(peerInfo => {
-        expect(CID.isCID(new CID(peerInfo.id))).to.be.true()
-        expect(peerInfo).to.have.a.property('addrs').that.is.an('array').and.all.satisfy(ma => Multiaddr.isMultiaddr(ma))
+      expect(peerDatas).to.all.satisfy(peerData => {
+        expect(CID.isCID(new CID(peerData.id))).to.be.true()
+        expect(peerData).to.have.a.property('addrs').that.is.an('array').and.all.satisfy(ma => Multiaddr.isMultiaddr(ma))
 
         return true
       })
