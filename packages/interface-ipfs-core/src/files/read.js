@@ -3,10 +3,12 @@
 
 const concat = require('it-concat')
 const all = require('it-all')
+const drain = require('it-drain')
 const { fixtures } = require('../utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const createShardedDirectory = require('../utils/create-sharded-directory')
 const randomBytes = require('iso-random-stream/src/random')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -26,6 +28,12 @@ module.exports = (common, options) => {
     before(async () => { ipfs = (await common.spawn()).api })
 
     after(() => common.clean())
+
+    it('should respect timeout option when reading files', () => {
+      return testTimeout(() => drain(ipfs.files.read('/derp', {
+        timeout: 1
+      })))
+    })
 
     it('reads a small file', async () => {
       const filePath = '/small-file.txt'

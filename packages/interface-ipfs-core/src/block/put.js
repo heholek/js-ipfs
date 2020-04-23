@@ -5,6 +5,7 @@ const Block = require('ipfs-block')
 const multihash = require('multihashes')
 const CID = require('cids')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -23,6 +24,12 @@ module.exports = (common, options) => {
     })
 
     after(() => common.clean())
+
+    it('should respect timeout option when putting a block', () => {
+      return testTimeout(() => ipfs.block.put(Buffer.from('derp'), {
+        timeout: 1
+      }))
+    })
 
     it('should put a buffer, using defaults', async () => {
       const expectedHash = 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'

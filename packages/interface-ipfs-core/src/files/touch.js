@@ -5,6 +5,7 @@ const { nanoid } = require('nanoid')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('delay')
 const concat = require('it-concat')
+const testTimeout = require('../utils/test-timeout')
 
 module.exports = (common, options) => {
   const describe = getDescribe(options)
@@ -36,6 +37,12 @@ module.exports = (common, options) => {
     before(async () => { ipfs = (await common.spawn()).api })
 
     after(() => common.clean())
+
+    it('should respect timeout option when updating the modification time of files', () => {
+      return testTimeout(() => ipfs.files.touch('/derp', {
+        timeout: 1
+      }))
+    })
 
     it('should have default mtime', async function () {
       this.slow(5 * 1000)

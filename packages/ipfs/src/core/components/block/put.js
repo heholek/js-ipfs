@@ -4,9 +4,10 @@ const Block = require('ipfs-block')
 const multihashing = require('multihashing-async')
 const CID = require('cids')
 const isIPFS = require('is-ipfs')
+const { withTimeoutOption } = require('../../utils')
 
 module.exports = ({ blockService, gcLock, preload }) => {
-  return async function put (block, options) {
+  return withTimeoutOption(async function put (block, options) {
     options = options || {}
 
     if (Array.isArray(block)) {
@@ -48,5 +49,5 @@ module.exports = ({ blockService, gcLock, preload }) => {
     } finally {
       release()
     }
-  }
+  })
 }

@@ -6,6 +6,8 @@ const delay = require('delay')
 const CID = require('cids')
 const all = require('it-all')
 const last = require('it-last')
+const drain = require('it-drain')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -26,6 +28,12 @@ module.exports = (common, options) => {
     })
 
     after(() => common.clean())
+
+    it('should respect timeout option when resolving an IPNS name', () => {
+      return testTimeout(() => ipfs.name.resolve('/ipns/Qmd7qZS4T7xXtsNFdRoK1trfMs5zU94EpokQ9WFtxdPxsZ', {
+        timeout: 1
+      }))
+    })
 
     it('should resolve a record default options', async function () {
       this.timeout(20 * 1000)

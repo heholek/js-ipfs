@@ -3,6 +3,7 @@
 const defer = require('p-defer')
 const { NotStartedError, AlreadyInitializedError } = require('../errors')
 const Components = require('./')
+const { withTimeoutOption } = require('../utils')
 
 module.exports = ({
   apiManager,
@@ -21,7 +22,7 @@ module.exports = ({
   preload,
   print,
   repo
-}) => async function stop () {
+}) => withTimeoutOption(async function stop () {
   const stopPromise = defer()
   const { cancel } = apiManager.update({ stop: () => stopPromise.promise })
 
@@ -62,9 +63,8 @@ module.exports = ({
     throw err
   }
 
-  stopPromise.resolve(apiManager.api)
-  return apiManager.api
-}
+  stopPromise.resolve()
+})
 
 function createApi ({
   apiManager,
@@ -182,7 +182,7 @@ function createApi ({
       bw: notStarted,
       repo: Components.repo.stat({ repo })
     },
-    stop: () => apiManager.api,
+    stop: () => {},
     swarm: {
       addrs: notStarted,
       connect: notStarted,

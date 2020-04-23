@@ -4,6 +4,8 @@
 const { fixtures } = require('./utils')
 const { getDescribe, getIt, expect } = require('./utils/mocha')
 const all = require('it-all')
+const drain = require('it-drain')
+const testTimeout = require('./utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -24,6 +26,12 @@ module.exports = (common, options) => {
     })
 
     after(() => common.clean())
+
+    it('should respect timeout option when listing local refs', () => {
+      return testTimeout(() => drain(ipfs.refs.local({
+        timeout: 1
+      })))
+    })
 
     it('should get local refs', async function () {
       const content = (name) => ({

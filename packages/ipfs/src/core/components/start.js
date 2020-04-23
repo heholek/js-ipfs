@@ -9,6 +9,7 @@ const routingConfig = require('../ipns/routing/config')
 const { AlreadyInitializedError, NotEnabledError } = require('../errors')
 const Components = require('./')
 const createMfsPreload = require('../mfs-preload')
+const { withTimeoutOption } = require('../utils')
 
 module.exports = ({
   apiManager,
@@ -23,7 +24,7 @@ module.exports = ({
   preload,
   print,
   repo
-}) => async function start () {
+}) => withTimeoutOption(async function start () {
   const startPromise = defer()
   const { cancel } = apiManager.update({ start: () => startPromise.promise })
 
@@ -110,7 +111,7 @@ module.exports = ({
 
   startPromise.resolve(apiManager.api)
   return apiManager.api
-}
+})
 
 function createApi ({
   apiManager,

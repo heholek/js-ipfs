@@ -3,6 +3,7 @@
 
 const { nanoid } = require('nanoid')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -21,6 +22,12 @@ module.exports = (common, options) => {
     })
 
     after(() => common.clean())
+
+    it('should respect timeout option when renaming keys', () => {
+      return testTimeout(() => ipfs.key.rename('old', 'new', {
+        timeout: 1
+      }))
+    })
 
     it('should rename a key', async function () {
       this.timeout(30 * 1000)

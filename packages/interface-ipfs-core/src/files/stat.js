@@ -11,6 +11,7 @@ const mh = require('multihashes')
 const Block = require('ipfs-block')
 const randomBytes = require('iso-random-stream/src/random')
 const isShardAtPath = require('../utils/is-shard-at-path')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -37,6 +38,12 @@ module.exports = (common, options) => {
     before(async () => { await all(ipfs.add(fixtures.smallFile.data)) })
 
     after(() => common.clean())
+
+    it('should respect timeout option when statting files', () => {
+      return testTimeout(() => ipfs.files.stat('/derp', {
+        timeout: 1
+      }))
+    })
 
     it('refuses to stat files with an empty path', async () => {
       await expect(ipfs.files.stat('')).to.be.rejected()

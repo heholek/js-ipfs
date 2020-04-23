@@ -5,7 +5,9 @@ const { getDescribe, getIt, expect } = require('../utils/mocha')
 const CID = require('cids')
 const createShardedDirectory = require('../utils/create-sharded-directory')
 const all = require('it-all')
+const drain = require('it-drain')
 const randomBytes = require('iso-random-stream/src/random')
+const testTimeout = require('../utils/test-timeout')
 
 const MFS_FILE_TYPES = {
   file: 0,
@@ -31,6 +33,12 @@ module.exports = (common, options) => {
     before(async () => { ipfs = (await common.spawn()).api })
 
     after(() => common.clean())
+
+    it('should respect timeout option when listing files', () => {
+      return testTimeout(() => drain(ipfs.files.ls({
+        timeout: 1
+      })))
+    })
 
     it('lists the root directory by default', async () => {
       const fileName = `small-file-${Math.random()}.txt`

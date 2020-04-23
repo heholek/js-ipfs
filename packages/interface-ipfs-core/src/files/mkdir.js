@@ -7,6 +7,7 @@ const multihash = require('multihashes')
 const createShardedDirectory = require('../utils/create-sharded-directory')
 const all = require('it-all')
 const isShardAtPath = require('../utils/is-shard-at-path')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -45,6 +46,12 @@ module.exports = (common, options) => {
     before(async () => { ipfs = (await common.spawn()).api })
 
     after(() => common.clean())
+
+    it('should respect timeout option when making a directory', () => {
+      return testTimeout(() => ipfs.files.mkdir('/dir-to-make', {
+        timeout: 1
+      }))
+    })
 
     it('requires a directory', async () => {
       await expect(ipfs.files.mkdir('')).to.eventually.be.rejected()

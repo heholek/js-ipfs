@@ -12,6 +12,7 @@ const CID = require('cids')
 const randomBytes = require('iso-random-stream/src/random')
 const createShardedDirectory = require('../utils/create-sharded-directory')
 const isShardAtPath = require('../utils/is-shard-at-path')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -30,6 +31,12 @@ module.exports = (common, options) => {
     before(async () => { ipfs = (await common.spawn()).api })
 
     after(() => common.clean())
+
+    it('should respect timeout option when copying a file', () => {
+      return testTimeout(() => ipfs.files.cp('/herp', '/derp', {
+        timeout: 1
+      }))
+    })
 
     it('refuses to copy files without a source', async () => {
       await expect(ipfs.files.cp()).to.eventually.be.rejected.with('Please supply at least one source')

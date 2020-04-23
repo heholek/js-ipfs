@@ -4,6 +4,7 @@
 const { nanoid } = require('nanoid')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const isShardAtPath = require('../utils/is-shard-at-path')
+const testTimeout = require('../utils/test-timeout')
 
 module.exports = (common, options) => {
   const describe = getDescribe(options)
@@ -35,6 +36,12 @@ module.exports = (common, options) => {
     })
 
     after(() => common.clean())
+
+    it('should respect timeout option when changing the mode of a file', () => {
+      return testTimeout(() => ipfs.files.chmod('/derp', '0777', {
+        timeout: 1
+      }))
+    })
 
     it('should update the mode for a file', async () => {
       const path = `/foo-${Math.random()}`

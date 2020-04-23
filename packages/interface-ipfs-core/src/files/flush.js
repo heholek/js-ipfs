@@ -3,6 +3,7 @@
 
 const { nanoid } = require('nanoid')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -30,6 +31,12 @@ module.exports = (common, options) => {
       } catch (err) {
         expect(err).to.exist()
       }
+    })
+
+    it('should respect timeout option when flushing changes', () => {
+      return testTimeout(() => ipfs.files.flush({
+        timeout: 1
+      }))
     })
 
     it('should flush root', async () => {

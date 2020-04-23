@@ -3,6 +3,7 @@
 
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const { isWebWorker } = require('ipfs-utils/src/env')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -25,6 +26,12 @@ module.exports = (common, options) => {
     })
 
     after(() => common.clean())
+
+    it('should respect timeout option when connecting to a remote peer', () => {
+      return testTimeout(() => ipfsA.swarm.connect(ipfsB.peerId.addresses[0], {
+        timeout: 1
+      }))
+    })
 
     it('should connect to a peer', async () => {
       let peers

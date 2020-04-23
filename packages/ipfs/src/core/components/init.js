@@ -373,7 +373,7 @@ function createApi ({
       bw: notStarted,
       repo: Components.repo.stat({ repo })
     },
-    stop: () => apiManager.api,
+    stop: () => {},
     swarm: {
       addrs: notStarted,
       connect: notStarted,

@@ -7,6 +7,7 @@ const createShardedDirectory = require('../utils/create-sharded-directory')
 const createTwoShards = require('../utils/create-two-shards')
 const randomBytes = require('iso-random-stream/src/random')
 const isShardAtPath = require('../utils/is-shard-at-path')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**
@@ -25,6 +26,12 @@ module.exports = (common, options) => {
     before(async () => { ipfs = (await common.spawn()).api })
 
     after(() => common.clean())
+
+    it('should respect timeout option when removing files', () => {
+      return testTimeout(() => ipfs.files.rm('/derp', {
+        timeout: 1
+      }))
+    })
 
     it('should not remove not found file/dir, expect error', () => {
       const testDir = `/test-${nanoid()}`

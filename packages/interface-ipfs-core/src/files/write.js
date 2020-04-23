@@ -12,6 +12,7 @@ const randomBytes = require('iso-random-stream/src/random')
 const all = require('it-all')
 const concat = require('it-concat')
 const isShardAtPath = require('../utils/is-shard-at-path')
+const testTimeout = require('../utils/test-timeout')
 
 let fs, tempWrite
 
@@ -98,11 +99,16 @@ module.exports = (common, options) => {
 
     after(() => common.clean())
 
-    // TODO: streaming request errors do not work over http
-    it.skip('explodes if it cannot convert content to a source', async () => {
+    it('should respect timeout option when writing files', () => {
+      return testTimeout(() => ipfs.files.write('/derp', [], {
+        timeout: 1
+      }))
+    })
+
+    it('explodes if it cannot convert content to a source', async () => {
       await expect(ipfs.files.write('/foo-bad-source', -1, {
         create: true
-      })).to.eventually.be.rejectedWith(/unexpected input/)
+      })).to.eventually.be.rejectedWith(/how to convert/)
     })
 
     it('explodes if given an invalid path', async () => {

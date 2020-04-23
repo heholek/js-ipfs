@@ -5,6 +5,7 @@ const { isBrowser, isWebWorker, isElectronRenderer } = require('ipfs-utils/src/e
 const { getTopic } = require('./utils')
 const { getDescribe, getIt, expect } = require('../utils/mocha')
 const delay = require('delay')
+const testTimeout = require('../utils/test-timeout')
 
 /** @typedef { import("ipfsd-ctl/src/factory") } Factory */
 /**

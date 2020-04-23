@@ -64,7 +64,7 @@ exports.getOrSet = {
 
     let originalConfig
     try {
-      originalConfig = await ipfs.config.get({
+      originalConfig = await ipfs.config.get(undefined, {
         signal: request.app.signal
       })
     } catch (err) {
@@ -104,7 +104,7 @@ exports.get = async (request, h) => {
 
   let config
   try {
-    config = await ipfs.config.get({
+    config = await ipfs.config.get(undefined, {
       signal: request.app.signal
     })
   } catch (err) {
@@ -121,7 +121,7 @@ exports.show = async (request, h) => {
 
   let config
   try {
-    config = await ipfs.config.get({
+    config = await ipfs.config.get(undefined, {
       signal: request.app.signal
     })
   } catch (err) {
